@@ -1,0 +1,707 @@
+
+/*		Compiling Slices
+ * ________________________________
+::::::::::::::::::::::::
+Includes Slices
+::::::::::::::::::::::::
+
+/*	Slice 1 / 8			Color & Background & Borders Properties */
+	/*   Slice 1 / 8		Color & Background & Borders Properties
+________________________________
+::::::::::::::::::::::::
+Includes Properties
+::::::::::::::::::::::::
+________________________________
+Color
+	color	
+	opacity
+________________________________
+Background 
+	background 
+	background-attachment
+	background-blend-mode
+	background-color
+	background-image
+	background-position
+	background-repeat
+	background-clip
+	background-origin
+	background-size
+________________________________
+Border
+	border
+	border-bottom
+	border-bottom-color
+	border-bottom-left-radius
+	border-bottom-right-radius
+	border-bottom-style
+	border-bottom-width
+	border-color
+	border-image
+	border-image-outset
+	border-image-repeat
+	border-image-slice
+	border-image-source
+	border-image-width
+	border-left
+	border-left-color
+	border-left-style
+	border-left-width
+	border-radius
+	border-right
+	border-right-color
+	border-right-style
+	border-right-width
+	border-style
+	border-top
+	border-top-color
+	border-top-left-radius
+	border-top-right-radius
+	border-top-style
+	border-top-width
+	border-width
+	box-decoration-break
+	box-shadow
+________________________________
+*/
+	/*COLOR-SCHEME============================================================*/
+	/*HEX*/
+	/*++++++++++++++++++++++++++++++++++++*/
+	/*RGBA*/
+	/*
+$c-txt-main: rgba(213, 215, 216, 1);
+$c-txt-auxiliary: rgba(142, 142, 142, 1);
+$c-txt-attention: rgba(204,24,30, 1);
+$c-link: rgba(39,147,232, 1);
+
+$c-bgr-main: rgba(0,0,0, 1);
+$c-bgr-auxiliary: rgba(15,15,15, 1);
+$c-bgr-attention: rgba(28, 28, 28, 1);
+*/
+	/*RESET====================================================================*/
+	/*BASIC STYLE==============================================================*/
+	/*HEADER===================================================================*/
+	/*MAIN=====================================================================*/
+	/*FOOTER===================================================================*/
+
+/*	Slice 2 / 8			Basic Box Properties */
+	/*   Slice 2 / 8		Basic Box Properties
+________________________________
+::::::::::::::::::::::::
+Includes Properties
+::::::::::::::::::::::::
+________________________________
+Display Position Z-index Clear Vertical-align
+	display
+	float
+	position
+	z-index
+	left
+	right
+	top
+	bottom
+	clear
+	clip
+	vertical-align
+________________________________
+Width & Height Margin & Padding
+	width
+	max-width
+	min-width
+	height
+	max-height
+	min-height
+	margin
+	margin-bottom
+	margin-left
+	margin-right
+	margin-top
+	padding
+	padding-bottom
+	padding-left
+	padding-right
+	padding-top
+________________________________
+Overflow Visibility
+	overflow
+	overflow-x
+	overflow-y
+	visibility
+________________________________
+*/
+	/*RESET===================================================================*/
+	html, body, ul, h1, h2, h4, h3, h5, h6, p, hr, figure {
+    margin: 0;
+    padding: 0
+}
+	body {
+    width: 100%;
+    max-width: 1920px;
+    margin: 0 auto
+}
+	.auto {
+    margin: auto
+}
+	/*BASIC STYLE==============================================================*/
+	/*HEADER===================================================================*/
+	/*MAIN=====================================================================*/
+	/*FOOTER===================================================================*/
+
+/*	Slice 3 / 8			Flex Box Properties */
+	/*   Slice 3 / 8		Flex Box Properties & Grid
+________________________________
+::::::::::::::::::::::::
+Includes Properties
+::::::::::::::::::::::::
+________________________________
+	flex-flow
+	flex-direction
+	flex-wrap
+	justify-content	
+	align-items
+	align-content
+________________________________
+for Flex Item
+	align-self
+	flex
+	flex-grow
+	flex-shrink
+	flex-basis
+	order
+________________________________
+*
+
+/*FLEX ROW WRAP=================================================================*/
+	.fr_b_ee, .fr_c_ee, .fr_b_ss, .fr_a_hh, .fc_b_cc, .fr_e_ss, .fr_e_ee, .fr_e_cc, .fr_s_hh, .fr_e_hh, .fr_c_hh, .fr_b_hh, .fr_s_ss, .fr_s_cc, .fr_c_ss, .fr_c_cc, .fr_a_cc, .fr_b_cc, .fr_a_ss {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap
+}
+	/*FLEX ROW NO WRAP===============================================================*/
+	.frn_s_cc {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex
+}
+	/*FLEX COLUMN WRAP===============================================================*/
+	.fc_b_cc, .fc_c_hh, .fc_c_cc, .fc_b_hh, .fc_c_ee, .fc_a_cc {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: column wrap;
+            flex-flow: column wrap
+}
+	/*FLEX COLUMN NO WRAP============================================================*/
+	.fcn_b_cc, .fcn_a_cc, .fcn_c_cc {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: column nowrap;
+            flex-flow: column nowrap
+}
+	/*FLEX JUSTIFY-CONTENT===========================================================*/
+	.fr_s_ss, .fr_s_hh, .fr_s_cc, .frn_s_cc {
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start
+}
+	.fr_e_hh, .fr_e_cc, .fr_e_ee, .fr_e_ss {
+    -webkit-box-pack: end;
+        -ms-flex-pack: end;
+            justify-content: flex-end
+}
+	.fr_c_cc, .fr_c_hh, .fr_c_ss, .fr_c_ee, .fc_c_hh, .fc_c_cc, .fc_c_ee, .fcn_c_cc {
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center
+}
+	.fr_b_cc, .fr_b_hh, .fc_b_hh, .fc_b_cc, .fr_b_ss, .fcn_b_cc, .fr_b_ee {
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between
+}
+	.fr_a_ss, .fr_a_cc, .fr_a_hh, .fcn_a_cc, .fc_a_cc {
+    -ms-flex-pack: distribute;
+        justify-content: space-around
+}
+	/*FLEX ALIGN-ITEMS==============================================================*/
+	.fr_a_ss, .fr_c_ss, .fr_s_ss, .fr_e_ss, .fr_b_ss {
+    -webkit-box-align: start;
+        -ms-flex-align: start;
+            align-items: flex-start
+}
+	.fc_c_ee, .fr_e_ee, .fr_c_ee, .fr_b_ee {
+    -webkit-box-align: end;
+        -ms-flex-align: end;
+            align-items: flex-end
+}
+	.fc_a_cc, .fr_c_cc, .fr_b_cc, .fr_a_cc, .fr_s_cc, .fc_c_cc, .frn_s_cc, .fr_e_cc, .fc_b_cc, .fcn_b_cc, .fcn_a_cc, .fcn_c_cc {
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center
+}
+	.fr_s_hh, .fr_e_hh, .fr_c_hh, .fr_b_hh, .fc_c_hh, .fc_b_hh, .fr_a_hh {
+    -webkit-box-align: stretch;
+        -ms-flex-align: stretch;
+            align-items: stretch
+}
+	/*FLEX ALIGN-CONTENT============================================================*/
+	.fr_a_ss, .fr_c_ss, .fr_s_ss, .fr_e_ss, .fr_b_ss {
+    -ms-flex-line-pack: start;
+        align-content: flex-start
+}
+	.fc_c_ee, .fr_e_ee, .fr_c_ee, .fr_b_ee {
+    -ms-flex-line-pack: end;
+        align-content: flex-end
+}
+	.fc_a_cc, .fr_c_cc, .fr_b_cc, .fr_a_cc, .fr_s_cc, .fc_c_cc, .frn_s_cc, .fr_e_cc, .fc_b_cc, .fcn_b_cc, .fcn_a_cc, .fcn_c_cc {
+    -ms-flex-line-pack: center;
+        align-content: center
+}
+	.fr_s_hh, .fr_e_hh, .fr_c_hh, .fr_b_hh, .fc_c_hh, .fc_b_hh, .fr_a_hh {
+    -ms-flex-line-pack: stretch;
+        align-content: stretch
+}
+	/*FLEX ALIGN-SELF===============================================================*/
+	.fals_s {
+    -ms-flex-item-align: start;
+        align-self: flex-start
+}
+	.fals_e {
+    -ms-flex-item-align: end;
+        align-self: flex-end
+}
+	.fals_c {
+    -ms-flex-item-align: center;
+        -ms-grid-row-align: center;
+        align-self: center
+}
+	.fals_h {
+    -ms-flex-item-align: stretch;
+        -ms-grid-row-align: stretch;
+        align-self: stretch
+}
+	/* ================================================================ */
+	.ord-1 {
+    -webkit-box-ordinal-group: 0;
+        -ms-flex-order: -1;
+            order: -1
+}
+	/* ================================================================ */
+
+/*	Slice 4 / 8			Table & List Properties Properties */
+	/*   Slice 4 / 8		Table & List Properties Properties
+________________________________
+::::::::::::::::::::::::
+Includes Properties
+::::::::::::::::::::::::
+________________________________
+Table
+	border-collapse
+	border-spacing
+	caption-side
+	empty-cells
+	table-layout
+________________________________
+List
+	counter-increment
+	counter-reset
+	list-style
+	list-style-image
+	list-style-position
+	list-style-type
+________________________________
+*/
+	/*RESET===================================================================*/
+	ul {
+    list-style: none
+}
+	/*BASIC STYLE==============================================================*/
+	/*HEADER===================================================================*/
+	/*MAIN=====================================================================*/
+	/*FOOTER===================================================================*/
+
+/*	Slice 5 / 8			Text-Decoration & Font & Writing Modes Properties Properties */
+	/*   Slice 5 / 8		Text-Decoration & Font & Writing Modes Properties Properties
+________________________________
+::::::::::::::::::::::::
+Includes Properties
+::::::::::::::::::::::::
+________________________________
+Text
+	hanging-punctuation
+	hyphens
+	letter-spacing
+	line-break
+	line-height
+	overflow-wrap
+	tab-size
+	text-align
+	text-align-last
+	text-combine-upright
+	text-indent
+	text-justify
+	text-transform
+	white-space
+	word-break
+	word-spacing
+	word-wrap
+________________________________
+Text-Decoration	
+	Text Decoration
+	text-decoration	
+	text-decoration-color
+	text-decoration-line
+	text-decoration-style
+	text-shadow
+	text-underline-position
+________________________________
+Font
+	@font-face{}
+	@font-feature-values{}
+	font
+	font-family
+	font-feature-settings
+	font-kerning
+	font-language-override
+	font-size
+	font-size-adjust
+	font-stretch
+	font-style
+	font-synthesis
+	font-variant
+	font-variant-alternates
+	font-variant-caps
+	font-variant-east-asian
+	font-variant-ligatures
+	font-variant-numeric
+	font-variant-position
+	font-weight	
+________________________________
+Writing Modes
+	direction
+	text-orientation
+	text-combine-upright
+	unicode-bidi
+	user-select
+	writing-mode
+________________________________
+*/
+	/*TEXT SIZE=====================================================================*/
+	/*h1*/
+	/*h2*/
+	/*h3*/
+	/*h4*/
+	/*h5*/
+	/*h6*/
+	/*@FONT-FACE===================================================================*/
+	/*@font-face {
+    font-family: 'scratch';
+    src: 
+    	url('../font/san_diego_font/san_diego_font.woff2') format('woff2'),
+        url('../font/san_diego_font/san_diego_font.woff') format('woff'),
+        url('../font/san_diego_font/san_diego_font.svg#san_diego_fontmedium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+a, h1, h2, h3, h4, span, input
+{ 	font-family: scratch; }
+*/
+	/*LETTER-SPACING================================================================*/
+	.t_lsp, body {
+    letter-spacing: 0.094rem
+}
+	.t_lsp-larg {
+    letter-spacing: 0.125rem;
+    font-size: 1.313rem
+}
+	/*::::::::::::::::::::::::
+MOLECULES
+::::::::::::::::::::::::*/
+	.t_lsp_cntr {
+    letter-spacing: 0.094rem;
+    text-align: center
+}
+	/*TEXT-TRANSFORM================================================================*/
+	.t_upcas {
+    text-transform: uppercase
+}
+	/*::::::::::::::::::::::::
+MOLECULES
+::::::::::::::::::::::::*/
+	.t_upcas_cntr {
+    text-transform: uppercase;
+    text-align: center
+}
+	/*LINE-HEIGHT===================================================================*/
+	.t_linehg_m {
+    line-height: 1.45
+}
+	/*TEXT-ALIGN====================================================================*/
+	.t_str {
+    text-align: left
+}
+	.t_cntr {
+    text-align: center
+}
+	.t_end {
+    text-align: right
+}
+	/*TEXT-DECORATION===============================================================*/
+	a {
+    text-decoration: none
+}
+	.t_unl {
+    text-decoration: underline
+}
+	/*FONT-SIZE=====================================================================*/
+	.t_bxl {
+    font-size: 7vw
+}
+	h1, .t_xxxl {
+    font-size: 3rem
+}
+	h2, .t_xxl {
+    font-size: 1.625rem
+}
+	h3, .t_xl {
+    font-size: 1.5rem
+}
+	h4, .t_larg {
+    font-size: 1.313rem
+}
+	h5, .t_medium {
+    font-size: 1.125rem
+}
+	h6, .t_smal {
+    font-size: 1.063rem
+}
+	.t_xs {
+    font-size: 0.75rem
+}
+	.t_zero {
+    font-size: 0
+}
+	/*::::::::::::::::::::::::
+MOLECULES
+::::::::::::::::::::::::*/
+	.t_sml_itlc {
+    font-size: 1.063rem;
+    font-style: italic
+}
+	/*++++++++++++++++++++++++++++++++++++*/
+	.t_larg_bldr {
+    font-size: 1.313rem;
+    font-weight: bolder
+}
+	/*++++++++++++++++++++++++++++++++++++*/
+	.t_xl_end {
+    font-size: 1.5rem;
+    text-align: end
+}
+	.t_xxxl_end {
+    font-size: 3rem;
+    text-align: end
+}
+	/*++++++++++++++++++++++++++++++++++++*/
+	.t_med_cntr {
+    font-size: 1.125rem;
+    text-align: center
+}
+	.t_larg_cntr {
+    font-size: 1.313rem;
+    text-align: center
+}
+	.t_xxl_cntr {
+    font-size: 1.625rem;
+    text-align: center
+}
+	.t_xl_cntr {
+    font-size: 1.5rem;
+    text-align: center
+}
+	/*FONT-STYLE================================================================*/
+	h1, h2, h3, h4, h5, h6 {
+    font-style: normal
+}
+	.t_italic {
+    font-style: italic
+}
+	/*FONT-WEIGHT================================================================*/
+	h1, h2, h3, h4, h6 {
+    font-weight: normal
+}
+	.t_bolder {
+    font-weight: bolder
+}
+
+/*	Slice 6 / 8			Animation & Transform & Transition & User Interface Properties */
+	/*   Slice 6 / 8		Animation & Transform & Transition & User Interface Properties
+________________________________
+::::::::::::::::::::::::
+Includes Properties
+::::::::::::::::::::::::
+________________________________
+Animation
+	@keyframes{}
+	animation
+	animation-delay
+	animation-direction
+	animation-duration
+	animation-fill-mode
+	animation-name
+	animation-play-state
+	animation-timing-function
+________________________________
+Transform
+	backface-visibility
+	perspective
+	perspective-origin
+	transform
+	transform-origin
+	transform-style
+________________________________
+Transitions
+	transition
+	transition-property
+	transition-duration
+	transition-timing-function
+	transition-delay
+________________________________ 
+for User Interface
+	box-sizing
+	content
+	cursor
+	ime-mode
+	nav-down
+	nav-index
+	nav-left
+	nav-right
+	nav-up
+	outline
+	outline-color
+	outline-offset
+	outline-style
+	outline-width
+	resize
+	text-overflow
+________________________________
+*/
+	/*RESET======================================================================*/
+	a, section, article, div, span, nav, ul, input, textarea {
+    box-sizing: border-box
+}
+	/*++++++++++++++++++++++++++++++++++++*/
+	.a_pointer {
+    cursor: pointer
+}
+	/*++++++++++++++++++++++++++++++++++++*/
+	input, input[type="search"], input[type="text"], input[type="email"], textarea, button {
+    outline: none
+}
+	/*++++++++++++++++++++++++++++++++++++*/
+	textarea {
+    resize: none
+}
+	/*ANIMATION================================================================*/
+	.a_both {
+    -webkit-animation-duration: 1.5s;
+            animation-duration: 1.5s;
+    -webkit-animation-fill-mode: both;
+            animation-fill-mode: both
+}
+	/*TRANSFORM================================================================*/
+	.a_rot-180 {
+    -webkit-transform: rotate(180deg);
+            transform: rotate(180deg)
+}
+	.a_scale {
+    -webkit-transform: scale(1.5);
+            transform: scale(1.5)
+}
+	.a_scale-med {
+    -webkit-transform: scale(1.2);
+            transform: scale(1.2)
+}
+	/*TRANSITION================================================================*/
+	.a_easy {
+    transition: all 1.3s ease-in-out
+}
+	.a_easy_sl {
+    transition: all .3s ease-in-out
+}
+	.a_trans_linear_sl {
+    transition: all .5s linear
+}
+	/*@KEYFRAMES=================================================================*/
+
+/*	Slice 7 / 8			Selectors */
+	/*   Slice 7 / 8		Selectors
+________________________________
+::::::::::::::::::::::::
+Includes Properties
+::::::::::::::::::::::::
+________________________________
+Selectors
+	:active
+	::after
+	::before
+	:checked
+	:disabled
+	:empty
+	:enabled
+	:first-child
+	::first-letter
+	::first-line
+	:first-of-type
+	:focus
+	:hover
+	:in-range
+	:invalid
+	:lang(language)
+	:last-child
+	:last-of-type
+	:link
+	:not(selector)
+	:nth-child(n)
+	:nth-last-child(n)
+	:nth-last-of-type(n)
+	:nth-of-type(n)
+	:only-of-type
+	:only-child
+	:optional
+	:out-of-range
+	:read-only
+	:read-write
+	:required
+	:root
+	::selection
+	:target
+	:valid
+	:visited
+________________________________
+*/
+	/*RESET====================================================================*/
+	/*BASIC STYLE==============================================================*/
+	/*HEADER===================================================================*/
+	/*MAIN=====================================================================*/
+	/*FOOTER===================================================================*/
+
+/*	Slice 8 / 8			Media queries & Vendors */
+	/*   Slice 8 / 8		Media queries & Vendors
+________________________________
+::::::::::::::::::::::::
+Includes Media queries & Vendors
+::::::::::::::::::::::::
+*/
+	/*@MEDIA==================================================================*/
+	/* NoTe max-device-widt */
+	@media only screen and (max-width: 640px) {}
+	/*FONTELLO=================================================================*/
