@@ -1,9 +1,3 @@
-//============================================================
-// Path
-const
-    srcFolder  = ['./src/js/app.js'], // файли которые нужно обрабативать
-    distFolder = 'dist';              // папка куда одправляються файли
-
 
 //============================================================
 // Подключение плагинов
@@ -15,16 +9,21 @@ const
     ExtractTextPlugin  = require('extract-text-webpack-plugin'),// для извлечеиня из bundel в одельный файл
     UglifyJSPlugin     = require('uglifyjs-webpack-plugin');    // для минификации
 
+const
+    DIST_DIR = path.resolve(__dirname, 'dist'),
+    SRC_DIR = path.resolve(__dirname, 'src');
 //============================================================
 // Конфигурацыи (настройки) для плагинов
 const
     //библиотеки
     vendor = new webpack.ProvidePlugin({
-      $: 'jquery', jQuery: 'jquery'
+      $: 'jquery',
+      React: 'react',
+      ReactDOM: 'react-dom'
     }),
 
     //сперва удаляем концевою папку сборки чтоб не было конфликтов
-    cleanWebpackPlugin = new CleanWebpackPlugin([distFolder]),
+    cleanWebpackPlugin = new CleanWebpackPlugin('dist'),
 
     //компилируем новый index.html из src
     htmlWebpackPlugin = new HtmlWebpackPlugin({
@@ -50,12 +49,14 @@ const
 
 
 //============================================================
-module.exports = {
-
-  entry: srcFolder,
+const config = {
+  entry: {
+    app:  SRC_DIR + '/js/index.js'
+    //libs: ['jquery']
+  },
 
   output: {
-    path: path.resolve(__dirname, distFolder),
+    path: DIST_DIR + '/',
     filename: 'bundle.js'
   },
 
@@ -64,13 +65,30 @@ module.exports = {
       //HTML
       {
         test: /\.html$/,
-        use: ['html-loader']
+        use: [ {
+          loader: 'html-loader',
+          options: {
+            minimize: true
+          }
+        }],
       },
-      //CSS SASS
+      //CSS
       {
         test: /\.scss$/,
         use: extractTextPlugin.extract({
-          use: ['css-loader', 'sass-loader']
+          fallback: 'style-loader',
+          use: ['css-loader',
+            // СSS минифицируем + префиксы тока когда production
+            /*
+            {
+              loader: 'postcss-loader',
+              options: {
+                plugins() { return [require('autoprefixer'), require('cssnano')] }
+              }
+            },
+            */
+            'sass-loader'
+          ]
         })
       },
       //JS
@@ -79,7 +97,7 @@ module.exports = {
         use: [{
           loader: 'babel-loader',
           options: {
-            presets: ['es2015', 'react']
+            presets: ["react", "es2015", "stage-2"]
           }
         }]
       },
@@ -93,31 +111,36 @@ module.exports = {
             name: '[name].[ext]',
             outputPath: 'img/'
           }
-        }, /*{
-          //минифицируем тока когда build
-          loader: 'image-webpack-loader',
-          options: {
-            optipng:  { optimizationLevel: 7 },
-            pngquant: { quality: '65-90', speed: 4 },
-            mozjpeg:  { progressive: true, quality: 65 }
+        },
+          // IMG минифицируем тока когда build
+           /*
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              optipng:  { optimizationLevel: 7 },
+              pngquant: { quality: '65-90', speed: 4 },
+              mozjpeg:  { progressive: true, quality: 65 }
+            }
           }
-        }*/]
+          */
+        ]
       },
-      //Additional HTML
-      {
-        test: /\.html$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]'
-          }
-        }],
-        exclude: path.resolve(__dirname, 'src/index.html'),
-      }
+      //Additional HTML or use htmlWebpackPlugin Again!
+      /*{
+       test: /\.html$/,
+       use: [{
+       loader: 'file-loader',
+       options: {
+       name: '[name].[ext]'
+       }
+       }],
+       exclude: path.resolve(__dirname, 'src/index.html'),
+       }*/
     ]
   },
 
   plugins: [
+   // new webpack.optimize.CommonsChunkPlugin('libs.js'),
     vendor,
     cleanWebpackPlugin,
     htmlWebpackPlugin,
@@ -125,3 +148,5 @@ module.exports = {
     extractTextPlugin
   ]
 };
+
+module.exports = config;
