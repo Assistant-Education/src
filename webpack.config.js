@@ -1,3 +1,14 @@
+// Проверяем в каком режиме запущен npm (prod или dev)
+const isProd = process.env.NODE_ENV === 'production'; // true or false
+//disable: !isProd,
+
+
+//============================================================
+// Изначальные пути
+const
+    DIST_DIR = path.resolve(__dirname, 'dist'),
+    SRC_DIR  = path.resolve(__dirname, 'src');
+
 
 //============================================================
 // Подключение плагинов
@@ -9,9 +20,7 @@ const
     ExtractTextPlugin  = require('extract-text-webpack-plugin'),// для извлечеиня из bundel в одельный файл
     UglifyJSPlugin     = require('uglifyjs-webpack-plugin');    // для минификации
 
-const
-    DIST_DIR = path.resolve(__dirname, 'dist'),
-    SRC_DIR = path.resolve(__dirname, 'src');
+
 //============================================================
 // Конфигурацыи (настройки) для плагинов
 const
@@ -48,17 +57,38 @@ const
     });
 
 
+
+//============================================================
+// Конфигурацыи (настройки) для модуля
+
+//CSS Config
+//конфигурация для разработки (транспилируем sass в css)
+const cssDev = ['css-loader', 'sass-loader'];
+//онфигурация для сборки (sass в css + минифицируем + автопрефикс)
+const cssProd = [
+  'css-loader',
+  {
+    loader: 'postcss-loader',
+    options: {
+      plugins() { return [require('autoprefixer'), require('cssnano')]; },
+    },
+  },
+  'sass-loader',
+];
+//ввыбор конфигурации
+const cssConfig = isProd ? cssProd : cssDev;
 //============================================================
 const config = {
   entry: {
-    app:  SRC_DIR + '/js/index.js'
-    //libs: ['jquery']
+    common:  SRC_DIR + '/js/index.js'
   },
 
   output: {
     path: DIST_DIR + '/',
-    filename: 'bundle.js'
+    filename: '[name].bundle.js'
   },
+
+  //devtool: 'source-map',
 
   module: {
     rules: [
@@ -68,7 +98,7 @@ const config = {
         use: [ {
           loader: 'html-loader',
           options: {
-            minimize: true
+            minimize: false
           }
         }],
       },
@@ -77,18 +107,7 @@ const config = {
         test: /\.scss$/,
         use: extractTextPlugin.extract({
           fallback: 'style-loader',
-          use: ['css-loader',
-            // СSS минифицируем + префиксы тока когда production
-            /*
-            {
-              loader: 'postcss-loader',
-              options: {
-                plugins() { return [require('autoprefixer'), require('cssnano')] }
-              }
-            },
-            */
-            'sass-loader'
-          ]
+          use: cssConfig,
         })
       },
       //JS
@@ -140,11 +159,15 @@ const config = {
   },
 
   plugins: [
-   // new webpack.optimize.CommonsChunkPlugin('libs.js'),
-    vendor,
+    /*new webpack.optimize.CommonsChunkPlugin({
+        name: 'commons',
+        filename: 'commons.js',
+        minChunks: 2
+    }),*/
+ vendor,
     cleanWebpackPlugin,
     htmlWebpackPlugin,
-    uglifyJSPlugin,
+   // uglifyJSPlugin,
     extractTextPlugin
   ]
 };
