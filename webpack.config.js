@@ -1,235 +1,333 @@
-//============================================================
+
+
 // Проверяем в каком режиме запущен npm (prod или dev)
-const isProd = process.env.NODE_ENV === 'production'; // true or false
-
-
-//============================================================
-// Подключение плагинов
 const
-    path               = require('path'),                       // для работы с папками
-    webpack            = require('webpack'),
-    CleanWebpackPlugin = require('clean-webpack-plugin'),       // для удаления файлов
-    HtmlWebpackPlugin  = require('html-webpack-plugin'),        // для експорта и минификации HTML
-    ExtractTextPlugin  = require('extract-text-webpack-plugin');// для извлечеиня из bundel в одельный файл
+    isProd = process.env.NODE_ENV === 'production'; // true or false
+
+// Выбераем какие source map подгружать
+const
+    sourceMap = isProd ? 'hidden-source-map' : 'eval-source-map';
 
 
 //============================================================
-// Изначальные пути
+// Подключение плагинов и прочего
+const
+    path                  = require('path'),                       // для работы с папками
+    webpack               = require('webpack'),
+    CleanWebpackPlugin    = require('clean-webpack-plugin'),       // для удаления файлов
+    HtmlWebpackPlugin     = require('html-webpack-plugin'),        // для експорта и минификации HTML
+    ExtractTextPlugin     = require('extract-text-webpack-plugin'),// для извлечеиня из bundel в одельный файл
+    FaviconsWebpackPlugin = require('favicons-webpack-plugin');    // генератор фавикон
+
+// Папки для разработки и релизу
 const
     production = 'dist',
     develop    = 'src',
 
-    DIST_DIR = path.resolve(__dirname, production),
-    SRC_DIR  = path.resolve(__dirname, develop);
+    DIST_DIR   = path.join(__dirname, production),
+    SRC_DIR    = path.join(__dirname, develop);
+
+
+
+
+
 
 
 //============================================================
 // Конфигурацыи (настройки) для плагинов
-    //___________________________________________________________
+
+
+//подключаем библиотеки ГЛОБАЛЬНО! // если не хочем писать import  from
+//но не проверяно как отрабатывает кеширование
+/*
 const
-    //подключаем библиотеки ЛОКАЛЬНО! // нужно писать import X from 'library'
-    libs = [], // ['jquery', 'react', 'react-dom']
-    //подключаем библиотеки ГЛОБАЛЬНО! // если не хочем писать import X from 'library'
     provideVendorGlob = new webpack.ProvidePlugin({
       $:        'jquery',
       React:    'react',
-      ReactDOM: 'react-dom'
+      ReactDOM: 'react-dom',
     });
+*/
 
-    //___________________________________________________________
+
+//вариант как подключить динамически все библиотеки чтоб не писать ручками
+/*
 const
-    //WOW подключаем динамически наши библиотеки
     chunkVendor = new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
-      minChunks: ({ resource }) => /node_modules/.test(resource)
+      minChunks: ({resource}) => /node_modules/.test(resource),
     });
+*/
 
-    //___________________________________________________________
+
+//удаляем концевою папку для релиза чтоб не было конфликтов наверно
 const
-    //удаляем концевою папку сборки чтоб не было конфликтов
     cleanFolderProd = new CleanWebpackPlugin(production);
 
-    //___________________________________________________________
-const
-    //компилируем (создаем) index.html из src
-    htmlIndex = new HtmlWebpackPlugin(
-        {
-          filename: 'index.html', template: 'src/index.html'
-        }
-        ),
-    htmlSecond = new HtmlWebpackPlugin(
-        {        filename: 'second.html',
-          template: 'src/second.html',
-        chunks: ['second']
-        }
-    );
 
-    //___________________________________________________________
+//магия кеширования отдельно: наши модули(commons) + библиотеки(vendor) + настройки webpack
 const
-    //достаем (создаем) наш готовый css из bundle.js
-    extractCss = new ExtractTextPlugin('css/[name].css');
+    commonsChunk = new webpack.optimize.CommonsChunkPlugin({
+      name: ['commons', 'vendor', 'webpack'],
+    });
 
-    //___________________________________________________________
-const
-    //минифицыруем все bundles
-    uglifyJs = new webpack.optimize.UglifyJsPlugin();
 
-    //___________________________________________________________
+//генеируем фавиконки https://github.com/evilebottnawi/favicons#usage
 const
-    //фих зна :( react советует добавлять етот плагин, для концевои сборки иначе ошибка
-    //библиотеки react уменшиваються
-    definePlugin = new webpack.DefinePlugin(
-        { 'process.env': {NODE_ENV: JSON.stringify('production')} }
-        );
+    favicons = new FaviconsWebpackPlugin({
+      // Your source logo
+      logo: `./${develop}/favicon/logo.png`,
+      // The prefix for all image files (might be a folder or a name)
+      prefix: 'favicon/',
+      // Emit all stats of the generated icons
+      emitStats: false,
+      // Generate a cache file with control hashes
+      persistentCache: true,
+      // Inject the html into the html-webpack-plugin
+      inject: true,
+      // favicon background color
+      background: '#fff',
+      // which icons should be generated (see https://github.com/haydenbleasel/favicons#usage)
+      icons: {
+        android: true,
+        appleIcon: true,
+        appleStartup: true,
+        coast: false,
+        favicons: true,
+        firefox: true,
+        opengraph: false,
+        twitter: false,
+        yandex: false,
+        windows: true
+      }
+    });
+
+
+//компилируем (создаем) index.html 
+const
+    htmlIndex = new HtmlWebpackPlugin({
+      template: path.join(__dirname, develop, 'index.html'),
+      inject: 'body',
+      hash: true,                       // для кеширования скриптов
+      filename: 'index.html',
+      chunks: ['index', 'commons', 'vendor', 'webpack'],
+      //excludeChunks: ['second']       // или указать какой кусок не нужно
+    });
+
+
+//достаем (создаем) наш готовый css из [name].bundle.js
+const
+    extractCss = new ExtractTextPlugin({
+      disable: !isProd,
+      filename: '[name].css', 			//нужо доработать путь выгрузки [name].[chunkhash] наверно X_X
+    });
+
+
+//минифицыруем js
+//Parallelization can speedup your build significantly and is therefore highly recommended
+const
+    uglifyJs = new webpack.optimize.UglifyJsPlugin({
+      parallel: {cache: true, workers: 2},
+      sourceMap: true,
+    });
+
+
+//not include all the extra code used in development
+//react рекомендует добавлять етот плагин, для концевои сборки чтоб уменшить вес библиотеки
+const
+    definePlugin = new webpack.DefinePlugin({
+      'process.env': {NODE_ENV: JSON.stringify('production')},
+    });
+
+
+
+
+
 
 
 //============================================================
-// Конфигурацыи (настройки) для модуля
-    //___________________________________________________________
-    //HTML Config
-    //минифицируем толька когда production isProd === true
-const htmlConfig = [{
-  loader: 'html-loader',
-  options: { minimize: isProd }
-}];
+// Конфигурации (настройки) для модуля
 
-//___________________________________________________________
+
+//HTML Config
+//минифицируем толька когда production isProd === true
+const
+    htmlConfig = [
+      {
+        loader: 'html-loader',
+        options: {minimize: isProd},
+      }];
+
+
 //CSS Config
-//конфигурация для разработки (транспилируем sass в css)
-const cssDev = ['css-loader', 'sass-loader'];
-//конфигурация для сборки (sass в css + минифицируем + автопрефикс)
-const cssProd = [
-  'css-loader',
-  {
-    loader: 'postcss-loader',
-    options: {
-      plugins() { return [require('autoprefixer'), require('cssnano')]; },
-    },
-  },
-  'sass-loader',
-];
+//для разработки (транспилируем sass в css)
+const
+    cssDev = ['css-loader', 'sass-loader'];
+
+//для сборки (sass в css + минифицируем + автопрефикс)
+const
+    cssProd = [
+      'css-loader',
+      {
+        loader: 'postcss-loader',
+        options: {
+          plugins() { return [require('autoprefixer'), require('cssnano')]; },
+        },
+      },
+      'sass-loader',
+    ];
+
 //ввыбор конфигурации для CSS
-const cssConfig = isProd ? cssProd : cssDev;
+const
+    cssConfig = isProd ? cssProd : cssDev;
 
-//___________________________________________________________
+
+//Font Config выгружаем шрифты
+const
+    fontConfig = [
+      {
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',           //retain original file name
+          outputPath: 'font/',
+        },
+      }];
+
+
 //IMG Config
-//конфигурация для разработки (подгружаем картинки)
-const imgDev = [{
-  loader: 'file-loader',
-  options: {
-    name: '[name].[ext]',
-    outputPath: 'img/'
-  }
-}];
-//конфигурация для сборки (подгружаем картинки + минифицируем)
-const imgProd =  [{
-  loader: 'file-loader',
-  options: {
-    name: '[name].[ext]',
-    outputPath: 'img/'
-  }
-},
-  {
-    loader: 'image-webpack-loader',
-    options: {
-      optipng:  { optimizationLevel: 7 },
-      pngquant: { quality: '65-90', speed: 4 },
-      mozjpeg:  { progressive: true, quality: 65 }
-    }
-  }
-];
+//для разработки (выгружаем картинки)
+const
+    imgDev = [
+      {
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
+          outputPath: 'img/',
+        },
+      }];
+
+//для сборки (выгружаем картинки + минифицируем)
+const
+    imgProd = [
+      {
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
+          outputPath: 'img/',
+        },
+      },
+      {
+        loader: 'image-webpack-loader',
+        options: {
+          optipng: {optimizationLevel: 7},
+          pngquant: {quality: '65-90', speed: 4},
+          mozjpeg: {progressive: true, quality: 65},
+        },
+      },
+    ];
+
 //ввыбор конфигурации для IMG
-const imgConfig = isProd ? imgProd : imgDev;
+const
+    imgConfig = isProd ? imgProd : imgDev;
 
 
-//___________________________________________________________
-//JS Config
-//конфигурации настройки для Babel
-const jsConfig = [{
-  loader: 'babel-loader',
-  options: {
-    presets: ["react", "es2015", "stage-2"]
-  }
-}];
+
+
+
 
 
 //============================================================
-//MODULE
-const config = {
-  entry: {
-    index: SRC_DIR + '/js/index.js',
-    //vendor открываем тока когда нужно использовать локально библиотекм
-    //vendor: libs,
-  },
-  output: {
-    path: DIST_DIR + '/',
-    filename: '[name].bundle.js',
-  },
-  //devtool: 'source-map',
-  module: {
-    rules: [
-      //HTML
-      {
-        test: /\.html$/,
-        use: htmlConfig
+//Модуль WebPack
+
+const
+    config = {
+
+     devtool: sourceMap,                            //выбираем тип карт
+
+      entry: {
+        vendor: ['jquery', 'react', 'react-dom'],   //бандел c библиотеками
+        index: SRC_DIR + '/js/index.js',            //бандел для index.html
       },
-      //CSS
-      {
-        test: /\.scss$/,
-        exclude: /node_modules/,
-        use: extractCss.extract({
-          fallback: 'style-loader',
-          use: cssConfig
-        })
+
+      output: {
+        path: DIST_DIR + '/',                       //концевая папка сборки
+        filename: '[name].[chunkhash].bundle.js',   //имя с entry + hach для кеша
       },
-      //JS & JSX
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: jsConfig
+
+      module: {
+        rules: [
+          //HTML - Loader
+          {
+            include: SRC_DIR,                       //тока папка разработки
+            test: /\.html$/,                        //берем все .html файлы
+            use: htmlConfig,                        //перерабатываем их
+          },
+          //CSS - Loader
+          {
+            include: SRC_DIR,                       //тока папка разработки
+            test: /\.scss$/,                        //берем sass файлы
+            use: ExtractTextPlugin.extract({        //достаем (создаем) css файлы
+              fallback: 'style-loader',             //процес снизу в верх или справа на лево !!!
+              use: cssConfig,                       //компилируем в css файлы
+            }),
+          },
+          //Font - используя file-loader
+          {
+            include: SRC_DIR,
+            exclude: path.resolve(__dirname, 'src/img/'),
+            test: /\.(woff|woff2|svg)$/,
+            use: fontConfig,
+          },
+          //JS & JSX - Loader
+          {
+            include: SRC_DIR,                       //тока папка разработки
+            test: /\.(js|jsx)$/,                    //берем js и jsx файлы
+            use: 'babel-loader',                    //конфик в package.json
+          },
+          //IMG используя file-loader
+          {
+            include: SRC_DIR,                      //тока папка разработки
+            exclude: path.resolve(__dirname, 'src/font/'),  //папку с шрифтами не проверяем
+            test: /\.(jpg|png|svg)$/,              //берем jpg,png,svg файлы
+            use: imgConfig,                        //подгружаем картинки / перебрасываем
+          },
+        ],
       },
-      //IMG
-      {
-        test: /\.(jpg|png|svg)$/,
-        exclude: /node_modules/,
-        use: imgConfig,
+
+      //Настройки для webpack-dev-server
+      devServer: {
+        port: 9000,                             //выбор порта
+        open: true,                             //автоматически открыть окно
+        stats: 'errors-only',                   //в консоль тока ошибки показывать
       },
-      //Additional HTML
-   /*   {
-       test: /\.html$/,
-       use: [{
-         loader: 'file-loader',
-         options: {
-           name: '[name].[ext]'
-         }
-       }],
-       exclude: path.resolve(__dirname, 'src/index.html'),
-       }*/
-    ]
-  },
-  devServer: {
-    port: 9000,
-    open: true,
-    compress: true
-    //stats: "errors-only",
-  },
-  plugins: isProd?
-      // плагины для production
-      [ cleanFolderProd,
-        htmlIndex,
-        extractCss,
-        definePlugin,
-        uglifyJs,
-        provideVendorGlob,
-        chunkVendor
-      ]:
-      // плагины для develop
-      [ htmlIndex,
-       // htmlSecond,
-        extractCss,
-        provideVendorGlob,
-        chunkVendor
-      ]
-};
+
+      //shortcuts
+      //для относительных путей запись ~root/../.. (css!!!)
+      //для абсолютных путе запись root/../.. (js)
+      resolve: {
+        alias: {
+          'root': path.resolve(__dirname, develop),
+        },
+      },
+
+      plugins: isProd ?
+          //плагины для production
+          [
+            //provideVendorGlob,                      //включаем библиотеки ГЛОБАЛЬНО!
+            cleanFolderProd,                        //удаляем для сборки
+            commonsChunk,                           //кешируем модули(commons)(vendor)(webpack)
+            favicons,                               //генерируем фавиконки (кешируються)
+            htmlIndex,                              //компилируем index.html
+            extractCss,                             //компилируем css
+            definePlugin,                           //облегчаем библиотеки
+            uglifyJs,                               //уродуем js
+          ] :
+          //плагины для develop
+          [
+            //provideVendorGlob,                      //включаем библиотеки ГЛОБАЛЬНО!
+            commonsChunk,                           //кешируем модули(commons)(vendor)(webpack)
+            htmlIndex,                              //компилируем index.html
+            extractCss,                             //компилируем css
+          ],
+    };
 
 module.exports = config;
